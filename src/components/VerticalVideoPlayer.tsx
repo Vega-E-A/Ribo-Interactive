@@ -81,7 +81,10 @@ export const VerticalVideoPlayer: React.FC<Props> = ({
   const handleTogglePlay = useCallback(() => {
     const nextState = audioSingleton.toggle();
     setIsPlaying(nextState);
-  }, []);
+    if (nextState && orbitMode === 'manual-drag') {
+      onOrbitModeChange('auto-orbit');
+    }
+  }, [orbitMode, onOrbitModeChange]);
 
   // Handle Mute
   const handleToggleMute = useCallback(() => {
@@ -113,25 +116,35 @@ export const VerticalVideoPlayer: React.FC<Props> = ({
     }
   };
 
+  // Drag tracking ref
+  const dragMovedRef = useRef(false);
+
   // Manual Drag Orbit handling
   const handlePointerDown = (e: React.PointerEvent) => {
+    // Prevent dragging when clicking interactive buttons
+    if ((e.target as HTMLElement).closest('button, input, a')) return;
     setIsDragging(true);
+    dragMovedRef.current = false;
     setDragStartX(e.clientX);
     setDragStartAngle(manualAngle);
-    if (orbitMode !== 'manual-drag') {
-      onOrbitModeChange('manual-drag');
-    }
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging) return;
     const deltaX = e.clientX - dragStartX;
-    const newAngle = (dragStartAngle + deltaX * 0.7) % 360;
-    setManualAngle(newAngle);
+    if (Math.abs(deltaX) > 8) {
+      dragMovedRef.current = true;
+      if (orbitMode !== 'manual-drag') {
+        onOrbitModeChange('manual-drag');
+      }
+      const newAngle = ((dragStartAngle + deltaX * 0.7) % 360 + 360) % 360;
+      setManualAngle(newAngle);
+    }
   };
 
   const handlePointerUp = () => {
     setIsDragging(false);
+    dragMovedRef.current = false;
   };
 
   // 10-Second Time Update & Animation Loop
@@ -142,15 +155,14 @@ export const VerticalVideoPlayer: React.FC<Props> = ({
     let lastTime = performance.now();
 
     const loop = (now: number) => {
-      const dt = (now - lastTime) / 1000;
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
       lastTime = now;
 
       if (isPlaying) {
-        // Sync with audio engine current time
-        const audioCurrent = audioSingleton.currentTime;
-        let next = (curTimeRef.current + dt) % loopDuration;
-        if (Math.abs(next - audioCurrent) > 0.4) {
-          next = audioCurrent;
+        // Continuous smooth 10.0-second playhead progression
+        let next = curTimeRef.current + dt;
+        if (next >= loopDuration) {
+          next = next % loopDuration;
         }
         curTimeRef.current = next;
         setCurrentTime(next);
@@ -158,10 +170,6 @@ export const VerticalVideoPlayer: React.FC<Props> = ({
         // Detect lyrics active states in 10s loop
         const isVocal = (next >= 1.0 && next <= 4.8) || (next >= 6.0 && next <= 8.8);
         setVocalDropActive(isVocal);
-
-        if (onTimeUpdate) {
-          onTimeUpdate(next);
-        }
       }
 
       animId = requestAnimationFrame(loop);
@@ -169,7 +177,7 @@ export const VerticalVideoPlayer: React.FC<Props> = ({
 
     animId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animId);
-  }, [isPlaying, loopDuration, onTimeUpdate]);
+  }, [isPlaying, loopDuration]);
 
   // Compute Active Angle & Active Keyframe based on Mode & Time
   const activeOrbitAngle = useMemo(() => {
@@ -181,13 +189,13 @@ export const VerticalVideoPlayer: React.FC<Props> = ({
     if (orbitMode === 'closeup') return 140;
     if (orbitMode === 'wide-club') return 280;
 
-    // 'auto-orbit': High-energy 10-second seamless camera orbit around Ruby
+    // 'auto-orbit': High-energy 10-second seamless camera orbit around Ribby
     // Progress: 0 to 1 over 10 seconds
-    const progress = currentTime / loopDuration;
+    const progress = (currentTime % loopDuration) / loopDuration;
     // 360 degree orbit + sine sway for dynamic handheld cinematography
     const baseOrbit = progress * 360;
     const cameraSway = Math.sin(progress * Math.PI * 4) * 12;
-    return (baseOrbit + cameraSway) % 360;
+    return ((baseOrbit + cameraSway) % 360 + 360) % 360;
   }, [orbitMode, manualAngle, currentTime, loopDuration]);
 
   // Interpolate / blend between keyframe images based on active angle

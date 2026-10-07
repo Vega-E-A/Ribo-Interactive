@@ -96,6 +96,15 @@ export class CyberpunkAudioEngine {
     this.init();
     if (!this.ctx || !this.gainNode) return;
 
+    if (this.loopTimer) {
+      clearTimeout(this.loopTimer);
+      this.loopTimer = null;
+    }
+
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+
     this.isPlaying = true;
     this.startTime = this.ctx.currentTime;
 
