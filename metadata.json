@@ -1,0 +1,6 @@
+{
+  "name": "Ruby: Cyberpunk RIBO Underground",
+  "description": "Cinematic 9:16 vertical video loop and audio experience of Ruby dancing at the RIBO underground cyberpunk club with volumetric lasers and audio-reactive motion.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
