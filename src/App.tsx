@@ -4,9 +4,10 @@ import { AudioControls } from './components/AudioControls';
 import { DirectorHUD } from './components/DirectorHUD';
 import { VideoExporter } from './components/VideoExporter';
 import { CameraOrbitMode, VisualFXSettings } from './types';
+import { RIBBY_IMAGES } from './assets/images';
 import { 
   Radio, Sparkles, Sliders, Volume2, Film, Zap, Layers, Compass, 
-  ExternalLink, Disc3, ShieldCheck
+  ExternalLink, Disc3, ShieldCheck, RotateCw
 } from 'lucide-react';
 
 export default function App() {
@@ -27,7 +28,7 @@ export default function App() {
   // Camera Orbit State
   const [orbitMode, setOrbitMode] = useState<CameraOrbitMode>('auto-orbit');
   const [bassBoost, setBassBoost] = useState(1.2);
-  const [activeTab, setActiveTab] = useState<'director' | 'audio' | 'keyframes'>('director');
+  const [activeTab, setActiveTab] = useState<'director' | 'audio' | 'loop-maker' | 'keyframes'>('director');
 
   const handleUpdateFX = (partial: Partial<VisualFXSettings>) => {
     setFxSettings((prev) => ({ ...prev, ...partial }));
@@ -37,25 +38,25 @@ export default function App() {
     {
       title: 'Front Center Stage',
       desc: 'Ribby high-energy dance with maroon jacket, volumetric cyan lasers & RIBO neon sign',
-      img: '/src/assets/images/ribby_rebel_dance_front_1791393508947.jpg',
+      img: RIBBY_IMAGES.front,
       angle: '0° FRONT',
     },
     {
       title: '3/4 Dynamic Orbit',
       desc: 'Kinetic camera sweep with pierced ears, pick necklace & maroon biker jacket flare',
-      img: '/src/assets/images/ribby_camera_orbit_angle_1791393519291.jpg',
+      img: RIBBY_IMAGES.orbit,
       angle: '65° ORBIT',
     },
     {
       title: 'Facial Focus & Piercings',
       desc: 'Sharp focus on purple eyes, ear rings, glowing headphones, and cyan circuits',
-      img: '/src/assets/images/ribby_closeup_focus_1791393530166.jpg',
+      img: RIBBY_IMAGES.closeup,
       angle: '140° CLOSE-UP',
     },
     {
       title: 'Underground Club Wide',
       desc: 'Packed cyber crowd dancefloor and giant RIBO neon wall with rabbit ears symbol',
-      img: '/src/assets/images/ribby_wide_club_stage_1791393541142.jpg',
+      img: RIBBY_IMAGES.wide,
       angle: '280° WIDE',
     },
   ];
@@ -92,11 +93,11 @@ export default function App() {
             </div>
             <div className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 flex items-center gap-1.5 text-zinc-300">
               <Disc3 size={13} className="text-pink-400" />
-              <span>TRACK: <b className="text-pink-400 font-mono">138 BPM SPACE TRANCE</b></span>
+              <span>SOUNDTRACK: <b className="text-emerald-400 font-mono">MELLOW CHILL LOUNGE</b></span>
             </div>
             <div className="hidden sm:flex px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 items-center gap-1.5 text-zinc-300">
-              <Compass size={13} className="text-emerald-400" />
-              <span>ORBIT: <b className="text-emerald-400 font-mono">{orbitMode.toUpperCase()}</b></span>
+              <Compass size={13} className="text-cyan-400" />
+              <span>ORBIT: <b className="text-cyan-400 font-mono">{orbitMode.toUpperCase()}</b></span>
             </div>
           </div>
         </div>
@@ -116,7 +117,7 @@ export default function App() {
         {/* Right Column: Console Controls, Audio Visualizer, Keyframes & Exporter */}
         <div className="flex-1 w-full flex flex-col gap-5">
           {/* Section Tabs */}
-          <div className="flex items-center gap-2 border-b border-zinc-800/80 pb-2">
+          <div className="flex flex-wrap items-center gap-2 border-b border-zinc-800/80 pb-2">
             <button
               onClick={() => setActiveTab('director')}
               className={`py-1.5 px-3 rounded-lg font-cyber text-xs font-bold tracking-wider transition-colors flex items-center gap-1.5 ${
@@ -138,7 +139,19 @@ export default function App() {
               }`}
             >
               <Volume2 size={13} />
-              10S AUDIO ENGINE
+              MELLOW AUDIO
+            </button>
+
+            <button
+              onClick={() => setActiveTab('loop-maker')}
+              className={`py-1.5 px-3 rounded-lg font-cyber text-xs font-bold tracking-wider transition-colors flex items-center gap-1.5 ${
+                activeTab === 'loop-maker'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
+              }`}
+            >
+              <Film size={13} />
+              LOOP MAKER STUDIO
             </button>
 
             <button
@@ -150,7 +163,7 @@ export default function App() {
               }`}
             >
               <Layers size={13} />
-              8K KEYFRAME ORBIT ({keyframeGallery.length})
+              8K KEYFRAMES (4)
             </button>
           </div>
 
@@ -181,61 +194,85 @@ export default function App() {
               {/* Audio Stem Breakout Info */}
               <div className="p-4 rounded-xl bg-zinc-900/80 border border-zinc-800 text-xs font-hud flex flex-col gap-2">
                 <span className="font-cyber font-bold text-white text-xs">
-                  SONG SYNCHRONIZATION // "MY NAIL IN THE WALL"
+                  MELLOW AUDIO SOUNDSCAPE // "MY NAIL IN THE WALL"
                 </span>
                 <p className="text-zinc-400">
-                  Euphoric 138 BPM progressive space trance anthem featuring soaring supersaw leads, vocal formants, and rolling bassline:
+                  A soothing, non-fatiguing chillwave & ambient downtempo arrangement:
                 </p>
                 <ul className="list-disc list-inside space-y-1 text-zinc-300 pl-1">
-                  <li><strong className="text-cyan-400">t = 0.0s - 3.5s:</strong> Four-on-the-floor trance kick & vocal lead: <em>"Supersonic engine takes me through the sky"</em></li>
-                  <li><strong className="text-pink-400">t = 3.5s - 6.5s:</strong> Soaring vocal chorus: <em>"Supported my memory... My nail in the wall"</em></li>
-                  <li><strong className="text-cyan-400">t = 6.5s - 8.5s:</strong> Euphoric supersaw trance melodic leads and 16th-note progressive bass</li>
-                  <li><strong className="text-emerald-400">t = 8.5s - 10.0s:</strong> Laser risers and harmonic turnaround, seamlessly looping back to t = 0.0s</li>
+                  <li><strong className="text-cyan-400">Warm Analog Pads:</strong> Gentle swelling triangle chords (F#m9 - Dmaj7 - Amaj7 - Eadd9) with cozy lowpass filter</li>
+                  <li><strong className="text-pink-400">Dreamy Rhodes Melody:</strong> Soft bell-like melodic plucks playing the iconic theme without harshness</li>
+                  <li><strong className="text-cyan-400">Deep Warm Sine Sub:</strong> Pure 45-60Hz fundamental sub-bass with zero harsh buzzy overtone fatigue</li>
+                  <li><strong className="text-emerald-400">Cozy Lo-Fi Beat:</strong> Soft tape kick thump and gentle brush shakers at a relaxed 96 BPM tempo</li>
                 </ul>
               </div>
             </div>
           )}
 
-          {/* Tab 3: 8K Keyframe Gallery */}
-          {activeTab === 'keyframes' && (
-            <div className="grid grid-cols-2 gap-3">
-              {keyframeGallery.map((kf, i) => (
-                <div 
-                  key={i}
-                  className="rounded-xl overflow-hidden bg-zinc-900/90 border border-zinc-800 flex flex-col group cursor-pointer hover:border-cyan-500/60 transition-colors"
-                  onClick={() => {
-                    if (i === 0) setOrbitMode('front-stage');
-                    else if (i === 1) setOrbitMode('side-orbit');
-                    else if (i === 2) setOrbitMode('closeup');
-                    else setOrbitMode('wide-club');
-                  }}
-                >
-                  <div className="relative aspect-[9/16] max-h-56 overflow-hidden bg-black">
-                    <img 
-                      src={kf.img} 
-                      alt={kf.title} 
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-                    />
-                    <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-black/80 font-hud text-[10px] text-cyan-300 font-semibold border border-cyan-500/30">
-                      {kf.angle}
-                    </div>
-                  </div>
-                  <div className="p-2.5 flex flex-col">
-                    <span className="font-cyber text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">
-                      {kf.title}
-                    </span>
-                    <span className="font-hud text-[11px] text-zinc-400 line-clamp-1 mt-0.5">
-                      {kf.desc}
-                    </span>
-                  </div>
-                </div>
-              ))}
+          {/* Tab 3: Loop Maker Studio */}
+          {activeTab === 'loop-maker' && (
+            <div className="flex flex-col gap-4">
+              <VideoExporter />
             </div>
           )}
 
-          {/* Video Exporter Reel Tool */}
-          <VideoExporter />
+          {/* Tab 4: 8K Keyframe Gallery */}
+          {activeTab === 'keyframes' && (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-zinc-900/80 border border-zinc-800 text-xs font-hud">
+                <span className="text-zinc-400">
+                  Click any keyframe below to inspect, or click Resume to keep cycling:
+                </span>
+                <button
+                  onClick={() => setOrbitMode('auto-orbit')}
+                  className="py-1 px-2.5 rounded bg-cyan-500 text-black font-cyber text-[11px] font-bold flex items-center gap-1 shadow-sm"
+                >
+                  <RotateCw size={11} />
+                  Resume 4-Screen Auto Cycle
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                {keyframeGallery.map((kf, i) => (
+                  <div 
+                    key={i}
+                    className="rounded-xl overflow-hidden bg-zinc-900/90 border border-zinc-800 flex flex-col group cursor-pointer hover:border-cyan-500/60 transition-colors"
+                    onClick={() => {
+                      if (i === 0) setOrbitMode('front-stage');
+                      else if (i === 1) setOrbitMode('side-orbit');
+                      else if (i === 2) setOrbitMode('closeup');
+                      else setOrbitMode('wide-club');
+                    }}
+                  >
+                    <div className="relative aspect-[9/16] max-h-56 overflow-hidden bg-black">
+                      <img 
+                        src={kf.img} 
+                        alt={kf.title} 
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                      />
+                      <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-black/80 font-hud text-[10px] text-cyan-300 font-semibold border border-cyan-500/30">
+                        {kf.angle}
+                      </div>
+                    </div>
+                    <div className="p-2.5 flex flex-col">
+                      <span className="font-cyber text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">
+                        {kf.title}
+                      </span>
+                      <span className="font-hud text-[11px] text-zinc-400 line-clamp-1 mt-0.5">
+                        {kf.desc}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Loop Maker Quick Panel (Always visible below director console) */}
+          {activeTab === 'director' && (
+            <VideoExporter />
+          )}
 
           {/* Character Dossier Footer Card */}
           <div className="p-4 rounded-xl bg-gradient-to-r from-zinc-950 via-zinc-900/60 to-zinc-950 border border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-hud text-zinc-400">
